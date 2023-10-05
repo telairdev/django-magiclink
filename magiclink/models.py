@@ -75,7 +75,6 @@ class MagicLink(models.Model):
             'subject': settings.EMAIL_SUBJECT,
             'user': user,
             'magiclink': self.generate_url(request),
-            'request': request,
             'expiry': self.expiry,
             'ip_address': self.ip_address,
             'created': self.created,
@@ -84,8 +83,8 @@ class MagicLink(models.Model):
             'token_uses': settings.TOKEN_USES,
             'style': settings.EMAIL_STYLES,
         }
-        plain = render_to_string(settings.EMAIL_TEMPLATE_NAME_TEXT, context)
-        html = render_to_string(settings.EMAIL_TEMPLATE_NAME_HTML, context)
+        plain = render_to_string(settings.EMAIL_TEMPLATE_NAME_TEXT, context, request=request)
+        html = render_to_string(settings.EMAIL_TEMPLATE_NAME_HTML, context, request=request)
         send_mail(
             subject=settings.EMAIL_SUBJECT,
             message=plain,
