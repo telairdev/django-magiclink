@@ -55,9 +55,9 @@ class MagicLink(models.Model):
         query = urlencode(params)
 
         url_path = f'{url_path}?{query}'
-        domain = get_current_site(request).domain
+        
         scheme = request.is_secure() and 'https' or 'http'
-        url = urljoin(f'{scheme}://{domain}', url_path)
+        url = urljoin(f'{scheme}://{request.get_host()}', url_path)
         return url
 
     def send(self, request: HttpRequest) -> None:
@@ -75,6 +75,7 @@ class MagicLink(models.Model):
             'subject': settings.EMAIL_SUBJECT,
             'user': user,
             'magiclink': self.generate_url(request),
+            'request': request,
             'expiry': self.expiry,
             'ip_address': self.ip_address,
             'created': self.created,
