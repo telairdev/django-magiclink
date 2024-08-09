@@ -60,7 +60,7 @@ class MagicLink(models.Model):
         url = urljoin(f'{scheme}://{request.get_host()}', url_path)
         return url
 
-    def send(self, request: HttpRequest) -> None:
+    def send(self, request: HttpRequest, subject: str=None, from_email: str=None) -> None:
         user = User.objects.get(email=self.email)
 
         if not settings.IGNORE_UNSUBSCRIBE_IF_USER:
@@ -86,10 +86,10 @@ class MagicLink(models.Model):
         plain = render_to_string(settings.EMAIL_TEMPLATE_NAME_TEXT, context, request=request)
         html = render_to_string(settings.EMAIL_TEMPLATE_NAME_HTML, context, request=request)
         send_mail(
-            subject=settings.EMAIL_SUBJECT,
+            subject=subject or settings.EMAIL_SUBJECT,
             message=plain,
             recipient_list=[user.email],
-            from_email=djsettings.DEFAULT_FROM_EMAIL,
+            from_email=from_email or djsettings.DEFAULT_FROM_EMAIL,
             html_message=html,
         )
 
